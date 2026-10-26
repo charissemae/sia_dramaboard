@@ -1,0 +1,24 @@
+{% extends "Inv_Dramas/base.html" %}
+
+{% block title %}DramaBoard · Track the dramas you love{% endblock %}
+
+{% block content %}
+<section class="empty-panel landing-panel" aria-labelledby="landing-title">
+    <span class="empty-icon">
+        <svg class="icon" aria-hidden="true"><use href="#i-film"></use></svg>
+    </span>
+    <p class="section-kicker">Your drama board</p>
+    <h1 class="section-title" id="landing-title">Track the dramas you love.</h1>
+    <p>Keep a watchlist, rate what you finish, and share recommendations with the community.</p>
+    <div class="landing-actions">
+        <a class="empty-cta" href="{% url 'login' %}">
+            <svg class="icon" aria-hidden="true"><use href="#i-user"></use></svg>
+            <span>Log in</span>
+        </a>
+        <a class="btn-primary" href="{% url 'register' %}">
+            <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+            <span>Create account</span>
+        </a>
+    </div>
+</section>
+{% endblock %}

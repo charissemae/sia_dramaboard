@@ -1,0 +1,46 @@
+{% extends "Inv_Dramas/base.html" %}
+
+{% block title %}Create account · DramaBoard{% endblock %}
+
+{% block content %}
+<section class="empty-panel auth-panel" aria-labelledby="register-title">
+    <div class="auth-head">
+        <p class="section-kicker">Join the board</p>
+        <h1 class="section-title" id="register-title">Create your account</h1>
+        <p class="section-sub">Start tracking, rating, and recommending dramas.</p>
+    </div>
+
+    <form class="auth-form" method="post">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div class="form-alert" role="alert">
+            {% for error in form.non_field_errors %}
+            <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% for field in form %}
+        <div class="form-field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+            <div class="form-help">{{ field.help_text|safe }}</div>
+            {% endif %}
+            {% for error in field.errors %}
+            <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        <div class="form-actions">
+            <button class="btn-primary" type="submit">
+                <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+                <span>Create account</span>
+            </button>
+        </div>
+    </form>
+
+    <p class="auth-switch">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+</section>
+{% endblock %}

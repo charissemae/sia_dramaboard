@@ -1,0 +1,64 @@
+{% extends "Inv_Dramas/base.html" %}
+
+{% block title %}{{ page_title }} · DramaBoard{% endblock %}
+
+{% block content %}
+<section class="empty-panel form-panel" aria-labelledby="drama-form-title">
+    <div class="auth-head">
+        <p class="section-kicker">{% if drama %}Update the board{% else %}Share a recommendation{% endif %}</p>
+        <h1 class="section-title" id="drama-form-title">{{ page_title }}</h1>
+        <p class="section-sub">{% if drama %}Keep the details current for everyone following this drama.{% else %}Add the details that will help the community decide what to watch next.{% endif %}</p>
+    </div>
+
+    <form class="auth-form" method="post">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div class="form-alert" role="alert">
+            {% for error in form.non_field_errors %}
+            <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="form-grid">
+            {% for field in form %}
+            <div class="form-field{% if field.name == 'genre' or field.name == 'poster_url' or field.name == 'synopsis' or field.name == 'notes' %} form-field-wide{% endif %}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {% if field.name == 'country' %}
+                <div class="select-shell">
+                    {{ field }}
+                    <svg class="icon select-chevron" aria-hidden="true"><use href="#i-chevron"></use></svg>
+                </div>
+                {% else %}
+                {{ field }}
+                {% endif %}
+                {% if field.help_text %}
+                <div class="form-help">{{ field.help_text|safe }}</div>
+                {% endif %}
+                {% for error in field.errors %}
+                <p class="form-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="form-actions">
+            <button class="btn-primary" type="submit">
+                <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+                <span>{{ submit_label }}</span>
+            </button>
+            {% if drama %}
+            <a class="btn-ghost" href="{% url 'drama_detail' drama.pk %}">
+                <svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg>
+                <span>Cancel</span>
+            </a>
+            {% else %}
+            <a class="btn-ghost" href="{% url 'drama_list' %}">
+                <svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg>
+                <span>Cancel</span>
+            </a>
+            {% endif %}
+        </div>
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,160 @@
+{% extends "Inv_Dramas/base.html" %}
+
+{% block title %}{{ drama.title }} · DramaBoard{% endblock %}
+
+{% block content %}
+<a class="back-link" href="{% url 'drama_list' %}">
+    <svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg>
+    <span>Back to all dramas</span>
+</a>
+
+<article class="detail-card">
+    <div class="detail-poster">
+        {% if drama.poster_url %}
+        <img src="{{ drama.poster_url }}" alt="{{ drama.title }} poster">
+        {% else %}
+        <span class="detail-poster-initial" aria-hidden="true">{{ drama.title|first|upper }}</span>
+        <span class="detail-poster-mark" aria-hidden="true">
+            <svg class="icon"><use href="#i-film"></use></svg>
+        </span>
+        {% endif %}
+        <span class="detail-poster-genre">{{ drama.genre|default:"Drama" }}</span>
+    </div>
+
+    <div class="detail-body">
+        <div class="detail-heading">
+            <p class="section-kicker">{{ drama.country|default:"Community pick" }}</p>
+            <h1 class="detail-title">{{ drama.title }}</h1>
+            <div class="detail-meta">
+                <span class="meta-pill">
+                    <svg class="icon" aria-hidden="true"><use href="#i-tag"></use></svg>
+                    {{ drama.genre|default:"Drama" }}
+                </span>
+                {% if drama.release_year %}
+                <span class="meta-pill">
+                    <svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>
+                    {{ drama.release_year }}
+                </span>
+                {% endif %}
+                {% if drama.episode_count %}
+                <span class="meta-pill">
+                    <svg class="icon" aria-hidden="true"><use href="#i-film"></use></svg>
+                    {{ drama.episode_count }} episode{{ drama.episode_count|pluralize }}
+                </span>
+                {% endif %}
+                <span class="meta-pill">
+                    <svg class="icon" aria-hidden="true"><use href="#i-user"></use></svg>
+                    {{ drama.posted_by }}
+                </span>
+            </div>
+        </div>
+
+        <div class="rating-summary">
+            <span class="rating-summary-icon">
+                <svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg>
+            </span>
+            <div>
+                <p class="rating-average">
+                    {% if average_rating %}{{ average_rating|floatformat:1 }}<span>/10</span>{% else %}Not rated yet{% endif %}
+                </p>
+                <p class="rating-count">
+                    {% if rating_count %}{{ rating_count }} community rating{{ rating_count|pluralize }}{% else %}Be the first to rate this drama{% endif %}
+                </p>
+            </div>
+            {% if user_rating %}
+            <span class="rating-yours">Your rating: {{ user_rating.score }}/10</span>
+            {% endif %}
+        </div>
+
+        <div class="detail-actions">
+            {% if is_owner %}
+            <a class="btn-ghost" href="{% url 'drama_edit' drama.pk %}">
+                <svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg>
+                <span>Edit</span>
+            </a>
+            <a class="btn-danger" href="{% url 'drama_delete' drama.pk %}">
+                <svg class="icon" aria-hidden="true"><use href="#i-trash"></use></svg>
+                <span>Delete</span>
+            </a>
+            {% endif %}
+            <a class="btn-primary" href="{% url 'drama_create' %}">
+                <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+                <span>Add another drama</span>
+            </a>
+        </div>
+
+        {% if drama.synopsis %}
+        <section class="detail-section" aria-labelledby="synopsis-title">
+            <h2 id="synopsis-title">Synopsis</h2>
+            <p>{{ drama.synopsis|linebreaksbr }}</p>
+        </section>
+        {% endif %}
+
+        {% if drama.notes %}
+        <section class="detail-section" aria-labelledby="notes-title">
+            <h2 id="notes-title">Why {{ drama.posted_by }} recommends it</h2>
+            <p>{{ drama.notes|linebreaksbr }}</p>
+        </section>
+        {% endif %}
+    </div>
+</article>
+
+<section class="rating-panel" aria-labelledby="rate-title">
+    <div class="rating-panel-head">
+        <span class="empty-icon">
+            <svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg>
+        </span>
+        <div>
+            <p class="section-kicker">Community score</p>
+            <h2 class="section-title" id="rate-title">{% if user_rating %}Update your rating{% else %}Rate this drama{% endif %}</h2>
+            <p class="section-sub">Rate from 1 to 10. Your score updates the community average.</p>
+        </div>
+    </div>
+
+    <form class="rating-form" method="post">
+        {% csrf_token %}
+        {% if rating_form.non_field_errors %}
+        <div class="form-alert" role="alert">
+            {% for error in rating_form.non_field_errors %}
+            <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="form-field">
+            <label for="{{ rating_form.score.id_for_label }}">{{ rating_form.score.label }}</label>
+            {{ rating_form.score }}
+            {% for error in rating_form.score.errors %}
+            <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+        <button class="btn-primary" type="submit">
+            <svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg>
+            <span>{% if user_rating %}Update rating{% else %}Save rating{% endif %}</span>
+        </button>
+    </form>
+
+    {% if ratings %}
+    <div class="rating-list-wrap">
+        <h3 class="rating-list-title">Recent ratings</h3>
+        <ul class="rating-list">
+            {% for rating in ratings %}
+            <li>
+                <span class="avatar">{{ rating.user.username|first|upper }}</span>
+                <span class="rating-user">{{ rating.user.username }}</span>
+                <span class="rating-score">{{ rating.score }}/10</span>
+                <span class="rating-date">{{ rating.updated_at|date:"M d, Y" }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block footer %}
+<span class="foot-brand">
+    <svg class="icon" aria-hidden="true"><use href="#i-film"></use></svg>
+    DramaBoard
+</span>
+<span>Added by {{ drama.posted_by }} on {{ drama.date_added|date:"M d, Y" }}</span>
+{% endblock %}

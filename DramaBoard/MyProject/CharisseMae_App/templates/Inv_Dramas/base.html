@@ -1,0 +1,283 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <title>{% block title %}DramaBoard{% endblock %}</title>
+    <script>
+        (function () {
+            try {
+                if (localStorage.getItem("dramaboard-theme") === "dark") {
+                    document.documentElement.setAttribute("data-theme", "dark");
+                }
+            } catch (error) {}
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'Inv_Dramas/css/dashboard.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <svg class="svg-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+        <symbol id="i-film" viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="16" rx="3"></rect>
+            <path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"></path>
+        </symbol>
+        <symbol id="i-home" viewBox="0 0 24 24">
+            <path d="m3 10 9-7 9 7"></path>
+            <path d="M5 9v11h14V9"></path>
+            <path d="M9 20v-6h6v6"></path>
+        </symbol>
+        <symbol id="i-grid" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="7" rx="2"></rect>
+            <rect x="14" y="3" width="7" height="7" rx="2"></rect>
+            <rect x="3" y="14" width="7" height="7" rx="2"></rect>
+            <rect x="14" y="14" width="7" height="7" rx="2"></rect>
+        </symbol>
+        <symbol id="i-search" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m20 20-3.2-3.2"></path>
+        </symbol>
+        <symbol id="i-bell" viewBox="0 0 24 24">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+            <path d="M10.3 21a2 2 0 0 0 3.4 0"></path>
+        </symbol>
+        <symbol id="i-chevron" viewBox="0 0 24 24">
+            <path d="m6 9 6 6 6-6"></path>
+        </symbol>
+        <symbol id="i-menu" viewBox="0 0 24 24">
+            <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </symbol>
+        <symbol id="i-x" viewBox="0 0 24 24">
+            <path d="M6 6l12 12M18 6 6 18"></path>
+        </symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24">
+            <path d="M12 5v14M5 12h14"></path>
+        </symbol>
+        <symbol id="i-sparkles" viewBox="0 0 24 24">
+            <path d="m12 3 1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6L12 3Z"></path>
+            <path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z"></path>
+        </symbol>
+        <symbol id="i-tag" viewBox="0 0 24 24">
+            <path d="M20 12.5 12.5 20a2 2 0 0 1-2.8 0L4 14.3V4h10.3l5.7 5.7a2 2 0 0 1 0 2.8Z"></path>
+            <circle cx="8.5" cy="8.5" r="1.2"></circle>
+        </symbol>
+        <symbol id="i-filter" viewBox="0 0 24 24">
+            <path d="M4 7h10M18 7h2M4 17h2M10 17h10"></path>
+            <circle cx="16" cy="7" r="2"></circle>
+            <circle cx="8" cy="17" r="2"></circle>
+        </symbol>
+        <symbol id="i-sort" viewBox="0 0 24 24">
+            <path d="M8 20V4M5 7l3-3 3 3"></path>
+            <path d="M16 4v16M13 17l3 3 3-3"></path>
+        </symbol>
+        <symbol id="i-globe" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M3 12h18"></path>
+            <path d="M12 3c2.5 2.5 4 5.7 4 9s-1.5 6.5-4 9c-2.5-2.5-4-5.7-4-9s1.5-6.5 4-9Z"></path>
+        </symbol>
+        <symbol id="i-calendar" viewBox="0 0 24 24">
+            <rect x="3" y="5" width="18" height="16" rx="3"></rect>
+            <path d="M16 3v4M8 3v4M3 11h18"></path>
+        </symbol>
+        <symbol id="i-user" viewBox="0 0 24 24">
+            <circle cx="12" cy="8" r="4"></circle>
+            <path d="M4 21a8 8 0 0 1 16 0"></path>
+        </symbol>
+        <symbol id="i-sun" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+        </symbol>
+        <symbol id="i-moon" viewBox="0 0 24 24">
+            <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z"></path>
+        </symbol>
+        <symbol id="i-star" viewBox="0 0 24 24">
+            <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3Z"></path>
+        </symbol>
+        <symbol id="i-edit" viewBox="0 0 24 24">
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+        </symbol>
+        <symbol id="i-trash" viewBox="0 0 24 24">
+            <path d="M4 7h16M10 11v6M14 11v6M9 7V4h6v3M6 7l1 14h10l1-14"></path>
+        </symbol>
+        <symbol id="i-arrow-left" viewBox="0 0 24 24">
+            <path d="M19 12H5M11 6l-6 6 6 6"></path>
+        </symbol>
+    </svg>
+
+    <div class="ambient" aria-hidden="true">
+        <span class="orb orb-one"></span>
+        <span class="orb orb-two"></span>
+        <span class="orb orb-three"></span>
+        <span class="orb orb-four"></span>
+    </div>
+
+    <div class="shell">
+        <nav class="topbar" aria-label="Primary navigation">
+            <a class="brand" href="{% if request.user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'landing' %}{% endif %}" aria-label="DramaBoard">
+                <span class="brand-mark">
+                    <svg class="icon" aria-hidden="true"><use href="#i-film"></use></svg>
+                </span>
+                <span class="brand-name">DramaBoard</span>
+            </a>
+
+            {% if request.user.is_authenticated %}
+            <div class="nav-pill">
+                <a class="nav-link{% if request.resolver_match.url_name == 'dashboard' %} is-active{% endif %}" href="{% url 'dashboard' %}"{% if request.resolver_match.url_name == 'dashboard' %} aria-current="page"{% endif %}>
+                    <svg class="icon" aria-hidden="true"><use href="#i-home"></use></svg>
+                    <span>Dashboard</span>
+                </a>
+                <a class="nav-link{% if request.resolver_match.url_name == 'drama_list' or request.resolver_match.url_name == 'drama_detail' or request.resolver_match.url_name == 'drama_create' or request.resolver_match.url_name == 'drama_edit' or request.resolver_match.url_name == 'drama_delete' %} is-active{% endif %}" href="{% url 'drama_list' %}"{% if request.resolver_match.url_name == 'drama_list' or request.resolver_match.url_name == 'drama_detail' or request.resolver_match.url_name == 'drama_create' or request.resolver_match.url_name == 'drama_edit' or request.resolver_match.url_name == 'drama_delete' %} aria-current="page"{% endif %}>
+                    <svg class="icon" aria-hidden="true"><use href="#i-grid"></use></svg>
+                    <span>All dramas</span>
+                </a>
+                <form class="nav-search" role="search" method="get" action="{% url 'drama_list' %}">
+                    <button class="nav-search-submit" type="submit" aria-label="Search dramas">
+                        <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
+                    </button>
+                    <input type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Search dramas" aria-label="Search dramas" autocomplete="off">
+                </form>
+            </div>
+            {% endif %}
+
+            <div class="top-actions">
+                {% if request.user.is_authenticated %}
+                <div class="menu-wrap" data-menu>
+                    <button class="icon-btn" type="button" data-menu-trigger aria-expanded="false" aria-controls="notification-menu" aria-label="Notifications">
+                        <svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg>
+                    </button>
+                    <div class="dropdown notification-menu" id="notification-menu" data-menu-panel aria-hidden="true">
+                        <div class="dropdown-head">
+                            <span>Notifications</span>
+                            <span class="menu-count">0</span>
+                        </div>
+                        <div class="menu-empty">
+                            <span class="menu-empty-icon">
+                                <svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg>
+                            </span>
+                            <strong>You're all caught up</strong>
+                            <span>No new activity on the board yet.</span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="Dark theme" aria-pressed="false">
+                    <svg class="icon icon-moon" aria-hidden="true"><use href="#i-moon"></use></svg>
+                    <svg class="icon icon-sun" aria-hidden="true"><use href="#i-sun"></use></svg>
+                </button>
+
+                {% if request.user.is_authenticated %}
+                <div class="menu-wrap" data-menu>
+                    <button class="user-chip" type="button" data-menu-trigger aria-expanded="false" aria-controls="user-menu">
+                        <span class="avatar">{{ request.user.username|first|upper }}</span>
+                        <span class="user-meta">
+                            <span class="user-name">{{ request.user.username }}</span>
+                            <span class="user-role">{% if request.user.is_staff %}Administrator{% else %}Member{% endif %}</span>
+                        </span>
+                        <svg class="icon chevron" aria-hidden="true"><use href="#i-chevron"></use></svg>
+                    </button>
+                    <div class="dropdown user-menu" id="user-menu" data-menu-panel aria-hidden="true">
+                        <div class="user-summary">
+                            <span class="avatar avatar-lg">{{ request.user.username|first|upper }}</span>
+                            <div>
+                                <strong>{{ request.user.username }}</strong>
+                                <span>{{ request.user.email|default:"No email added" }}</span>
+                            </div>
+                        </div>
+                        <a class="dropdown-item" href="{% url 'dashboard' %}">
+                            <svg class="icon" aria-hidden="true"><use href="#i-home"></use></svg>
+                            <span>Dashboard</span>
+                        </a>
+                        <form class="logout-form" method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button class="dropdown-item" type="submit">
+                                <svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg>
+                                <span>Log out</span>
+                            </button>
+                        </form>
+                        <p class="dropdown-hint">Member since {{ request.user.date_joined|date:"M Y" }}</p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="auth-links">
+                    <a class="nav-link" href="{% url 'login' %}">Log in</a>
+                    <a class="nav-link is-active" href="{% url 'register' %}">Register</a>
+                </div>
+                {% endif %}
+
+                <button class="icon-btn mobile-toggle" type="button" data-mobile-toggle aria-expanded="false" aria-controls="mobile-menu" aria-label="Open navigation">
+                    <svg class="icon icon-menu" aria-hidden="true"><use href="#i-menu"></use></svg>
+                    <svg class="icon icon-close" aria-hidden="true"><use href="#i-x"></use></svg>
+                </button>
+            </div>
+        </nav>
+
+        <div class="mobile-menu" id="mobile-menu" data-mobile-menu>
+            {% if request.user.is_authenticated %}
+            <form class="nav-search mobile-search" role="search" method="get" action="{% url 'drama_list' %}">
+                <button class="nav-search-submit" type="submit" aria-label="Search dramas">
+                    <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
+                </button>
+                <input type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Search dramas" aria-label="Search dramas" autocomplete="off">
+            </form>
+            <a class="mobile-link{% if request.resolver_match.url_name == 'dashboard' %} is-active{% endif %}" href="{% url 'dashboard' %}">
+                <svg class="icon" aria-hidden="true"><use href="#i-home"></use></svg>
+                <span>Dashboard</span>
+            </a>
+            <a class="mobile-link{% if request.resolver_match.url_name == 'drama_list' or request.resolver_match.url_name == 'drama_detail' or request.resolver_match.url_name == 'drama_create' or request.resolver_match.url_name == 'drama_edit' or request.resolver_match.url_name == 'drama_delete' %} is-active{% endif %}" href="{% url 'drama_list' %}">
+                <svg class="icon" aria-hidden="true"><use href="#i-grid"></use></svg>
+                <span>All dramas</span>
+            </a>
+            <div class="mobile-divider"></div>
+            <div class="mobile-user">
+                <span class="avatar">{{ request.user.username|first|upper }}</span>
+                <div>
+                    <strong>{{ request.user.username }}</strong>
+                    <span>{{ request.user.email|default:"No email added" }}</span>
+                </div>
+            </div>
+            {% else %}
+            <a class="mobile-link" href="{% url 'login' %}">
+                <svg class="icon" aria-hidden="true"><use href="#i-user"></use></svg>
+                <span>Log in</span>
+            </a>
+            <a class="mobile-link is-active" href="{% url 'register' %}">
+                <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+                <span>Register</span>
+            </a>
+            {% endif %}
+        </div>
+
+        <main class="content">
+            {% if messages %}
+            <div class="flash-list" aria-live="polite">
+                {% for message in messages %}
+                <p class="flash {{ message.tags }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="site-foot">
+            {% block footer %}
+            <span class="foot-brand">
+                <svg class="icon" aria-hidden="true"><use href="#i-film"></use></svg>
+                DramaBoard
+            </span>
+            <span>Watch. Rate. Recommend.</span>
+            {% endblock %}
+        </footer>
+    </div>
+
+    <script src="{% static 'Inv_Dramas/js/dashboard.js' %}" defer></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

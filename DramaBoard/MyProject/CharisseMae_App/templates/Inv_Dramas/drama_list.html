@@ -1,0 +1,61 @@
+{% extends "Inv_Dramas/base.html" %}
+
+{% block title %}All dramas · DramaBoard{% endblock %}
+
+{% block content %}
+<section class="page-head" aria-labelledby="dramas-title">
+    <div>
+        <p class="section-kicker">Community library</p>
+        <h1 class="section-title" id="dramas-title">All dramas</h1>
+        <p class="section-sub">
+            {% if search_query %}
+            {{ drama_count }} result{{ drama_count|pluralize }} for &ldquo;{{ search_query }}&rdquo;
+            {% else %}
+            {{ drama_count }} recommendation{{ drama_count|pluralize }} on the board
+            {% endif %}
+        </p>
+    </div>
+    <a class="btn-primary" href="{% url 'drama_create' %}">
+        <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+        <span>Add drama</span>
+    </a>
+</section>
+
+<div class="drama-grid">
+    {% for drama in dramas %}
+    {% include "Inv_Dramas/_poster_card.html" with drama=drama %}
+    {% empty %}
+    <div class="empty-panel shelf-empty">
+        {% if search_query %}
+        <span class="empty-icon">
+            <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
+        </span>
+        <h2>No dramas found</h2>
+        <p>No results for &ldquo;{{ search_query }}&rdquo;. Try a different title, genre, or country.</p>
+        <a href="{% url 'drama_list' %}" class="empty-cta">
+            <svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg>
+            <span>Clear search</span>
+        </a>
+        {% else %}
+        <span class="empty-icon">
+            <svg class="icon" aria-hidden="true"><use href="#i-film"></use></svg>
+        </span>
+        <h2>No dramas yet</h2>
+        <p>Add the first recommendation and start the community library.</p>
+        <a href="{% url 'drama_create' %}" class="empty-cta">
+            <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+            <span>Add drama</span>
+        </a>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block footer %}
+<span class="foot-brand">
+    <svg class="icon" aria-hidden="true"><use href="#i-film"></use></svg>
+    DramaBoard
+</span>
+<span>{{ drama_count }} drama{{ drama_count|pluralize }} · Curated by the community</span>
+{% endblock %}

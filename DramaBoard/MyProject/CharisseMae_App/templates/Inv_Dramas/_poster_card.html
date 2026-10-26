@@ -1,0 +1,42 @@
+<article class="poster-card">
+    <a class="poster-link" href="{% url 'drama_detail' drama.pk %}" aria-label="View {{ drama.title }}">
+        <div class="poster">
+            {% if drama.poster_url %}
+            <img class="poster-img" src="{{ drama.poster_url }}" alt="{{ drama.title }} poster" loading="lazy">
+            <span class="poster-shade" aria-hidden="true"></span>
+            {% else %}
+            <span class="poster-glyph" aria-hidden="true">{{ drama.title|first|upper }}</span>
+            {% endif %}
+            <span class="poster-genre">{{ drama.genre|default:"Drama" }}</span>
+            <span class="poster-mark" aria-hidden="true">
+                <svg class="icon"><use href="#i-film"></use></svg>
+            </span>
+        </div>
+        <div class="poster-info">
+            <h3 class="poster-title" title="{{ drama.title }}">{{ drama.title }}</h3>
+            <div class="poster-meta">
+                <span>
+                    <svg class="icon" aria-hidden="true"><use href="#i-user"></use></svg>
+                    {{ drama.posted_by }}
+                </span>
+                <span>
+                    <svg class="icon" aria-hidden="true"><use href="#i-globe"></use></svg>
+                    {{ drama.country|default:"Not specified" }}
+                </span>
+                <span>
+                    <svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>
+                    {% if drama.release_year %}{{ drama.release_year }}{% else %}{{ drama.date_added|date:"M d, Y" }}{% endif %}
+                </span>
+                {% if drama.avg_rating %}
+                <span>
+                    <svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg>
+                    {{ drama.avg_rating|floatformat:1 }}
+                </span>
+                {% endif %}
+            </div>
+            <p class="poster-notes">
+                {% if drama.synopsis %}{{ drama.synopsis }}{% elif drama.notes %}{{ drama.notes }}{% else %}No notes added yet.{% endif %}
+            </p>
+        </div>
+    </a>
+</article>

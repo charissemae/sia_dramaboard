@@ -1,0 +1,25 @@
+{% extends "Inv_Dramas/base.html" %}
+
+{% block title %}Delete {{ drama.title }} · DramaBoard{% endblock %}
+
+{% block content %}
+<section class="empty-panel confirm-panel" aria-labelledby="delete-title">
+    <span class="empty-icon">
+        <svg class="icon" aria-hidden="true"><use href="#i-trash"></use></svg>
+    </span>
+    <p class="section-kicker">Remove from the board</p>
+    <h1 class="section-title" id="delete-title">Delete {{ drama.title }}?</h1>
+    <p>This removes the drama and its community ratings. This action cannot be undone.</p>
+    <form class="confirm-actions" method="post">
+        {% csrf_token %}
+        <button class="btn-danger" type="submit">
+            <svg class="icon" aria-hidden="true"><use href="#i-trash"></use></svg>
+            <span>Delete drama</span>
+        </button>
+        <a class="btn-ghost" href="{% url 'drama_detail' drama.pk %}">
+            <svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg>
+            <span>Keep drama</span>
+        </a>
+    </form>
+</section>
+{% endblock %}

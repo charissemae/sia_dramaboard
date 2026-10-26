@@ -1,0 +1,77 @@
+{% extends "Inv_Dramas/base.html" %}
+
+{% block title %}Change featured dramas · DramaBoard{% endblock %}
+
+{% block content %}
+<a class="back-link" href="{% url 'dashboard' %}">
+    <svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg>
+    <span>Back to dashboard</span>
+</a>
+
+<section class="form-panel featured-panel" aria-labelledby="featured-title">
+    <div class="auth-head">
+        <p class="section-kicker">Dashboard curation</p>
+        <h1 class="section-title" id="featured-title">Change featured dramas</h1>
+        <p class="section-sub">Choose up to two dramas for the homepage carousel. Leave all unchecked to feature the newest recommendations automatically.</p>
+    </div>
+
+    <form class="auth-form" method="post">
+        {% csrf_token %}
+        {% if form.non_field_errors or form.dramas.errors %}
+        <div class="form-alert" role="alert">
+            {% for error in form.non_field_errors %}
+            <p class="form-error">{{ error }}</p>
+            {% endfor %}
+            {% for error in form.dramas.errors %}
+            <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if dramas %}
+        <div class="featured-options" aria-label="Choose featured dramas">
+            {% for drama in dramas %}
+            <label class="featured-option">
+                <input type="checkbox" name="dramas" value="{{ drama.pk }}"{% if drama.pk in selected_ids %} checked{% endif %}>
+                <span class="featured-option-mark" aria-hidden="true"></span>
+                <span class="featured-option-poster">
+                    {% if drama.poster_url %}
+                    <img src="{{ drama.poster_url }}" alt="" loading="lazy">
+                    {% else %}
+                    <span class="featured-option-initial" aria-hidden="true">{{ drama.title|first|upper }}</span>
+                    {% endif %}
+                </span>
+                <span class="featured-option-copy">
+                    <span class="featured-option-title">{{ drama.title }}</span>
+                    <span class="featured-option-meta">{{ drama.genre|default:"Drama" }}{% if drama.country %} · {{ drama.country }}{% endif %}</span>
+                </span>
+            </label>
+            {% endfor %}
+        </div>
+
+        <div class="form-actions">
+            <button class="btn-primary" type="submit">
+                <svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg>
+                <span>Save featured</span>
+            </button>
+            <a class="btn-ghost" href="{% url 'dashboard' %}">
+                <svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg>
+                <span>Cancel</span>
+            </a>
+        </div>
+        {% else %}
+        <div class="empty-panel shelf-empty">
+            <span class="empty-icon">
+                <svg class="icon" aria-hidden="true"><use href="#i-film"></use></svg>
+            </span>
+            <h2>No dramas to feature yet</h2>
+            <p>Add a recommendation first, then come back to choose the featured picks.</p>
+            <a href="{% url 'drama_create' %}" class="empty-cta">
+                <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+                <span>Add a drama</span>
+            </a>
+        </div>
+        {% endif %}
+    </form>
+</section>
+{% endblock %}

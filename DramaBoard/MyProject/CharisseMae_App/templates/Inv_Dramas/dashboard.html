@@ -1,0 +1,167 @@
+{% extends "Inv_Dramas/base.html" %}
+
+{% block content %}
+<h1 class="sr-only">DramaBoard dashboard</h1>
+
+<section class="hero-carousel" aria-roledescription="carousel" aria-label="Featured dramas" data-hero-carousel>
+    <div class="hero-grid" data-hero-track role="region" aria-label="Featured drama slides" tabindex="0">
+        {% for drama in featured_dramas %}
+        <article class="hero-card" data-hero-slide role="group" aria-roledescription="slide" aria-label="{{ drama.title }}">
+            <div class="hero-art" aria-hidden="true">
+                <span class="hero-halo"></span>
+                <span class="hero-art-frame">
+                    <span class="hero-art-fallback">
+                        <span class="hero-art-initial">{{ drama.title|first|upper }}</span>
+                        <span class="hero-art-rule"></span>
+                        <svg class="icon hero-art-icon"><use href="#i-film"></use></svg>
+                    </span>
+                    {% if drama.poster_url %}
+                    <img class="hero-art-img" src="{{ drama.poster_url }}" alt="" loading="eager" data-hero-poster>
+                    {% endif %}
+                </span>
+            </div>
+            <div class="hero-copy">
+                <span class="hero-eyebrow">
+                    <svg class="icon" aria-hidden="true"><use href="#i-sparkles"></use></svg>
+                    Featured drama
+                </span>
+                <h2 class="hero-title"><a href="{% url 'drama_detail' drama.pk %}">{{ drama.title }}</a></h2>
+                <p class="hero-notes">{{ drama.notes|default:"No notes added for this pick yet." }}</p>
+                <div class="hero-meta">
+                    <span class="meta-pill">
+                        <svg class="icon" aria-hidden="true"><use href="#i-tag"></use></svg>
+                        {{ drama.genre|default:"Drama" }}
+                    </span>
+                    <span class="meta-pill">
+                        <svg class="icon" aria-hidden="true"><use href="#i-globe"></use></svg>
+                        {{ drama.country|default:"Not specified" }}
+                    </span>
+                    <span class="meta-pill">
+                        <svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>
+                        {{ drama.date_added|date:"M Y" }}
+                    </span>
+                    <span class="meta-pill">
+                        <svg class="icon" aria-hidden="true"><use href="#i-user"></use></svg>
+                        {{ drama.posted_by }}
+                    </span>
+                </div>
+                <a href="{% url 'drama_create' %}" class="add-cta">
+                    <span class="add-cta-icon">
+                        <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+                    </span>
+                    <span>Add recommendation</span>
+                </a>
+            </div>
+        </article>
+        {% empty %}
+        <div class="empty-panel hero-empty">
+            <span class="empty-icon">
+                <svg class="icon" aria-hidden="true"><use href="#i-film"></use></svg>
+            </span>
+            <h2>Your board is waiting</h2>
+            <p>No dramas have been added yet. Start the board with the first recommendation.</p>
+            <a href="{% url 'drama_create' %}" class="empty-cta">
+                <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+                <span>Add recommendation</span>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% if featured_dramas|length > 1 %}
+    <div class="hero-controls" aria-label="Featured drama controls">
+        <div class="hero-dots">
+            {% for drama in featured_dramas %}
+            <button class="hero-dot{% if forloop.first %} is-active{% endif %}" type="button" data-hero-dot="{{ forloop.counter0 }}" aria-label="Show {{ drama.title }}"{% if forloop.first %} aria-current="true"{% endif %}></button>
+            {% endfor %}
+        </div>
+        <button class="icon-btn hero-arrow hero-arrow-prev" type="button" data-hero-prev aria-label="Previous featured drama" disabled>
+            <svg class="icon" aria-hidden="true"><use href="#i-chevron"></use></svg>
+        </button>
+        <button class="icon-btn hero-arrow hero-arrow-next" type="button" data-hero-next aria-label="Next featured drama">
+            <svg class="icon" aria-hidden="true"><use href="#i-chevron"></use></svg>
+        </button>
+    </div>
+    {% endif %}
+    <p class="sr-only" aria-live="polite" data-hero-status></p>
+</section>
+
+{% url 'dashboard' as dashboard_url %}
+<div class="chip-row" aria-label="Filter dramas by genre">
+    <a class="chip{% if not selected_genre %} is-active{% endif %}" href="{{ dashboard_url }}#all-dramas"{% if not selected_genre %} aria-current="true"{% endif %}>
+        <svg class="icon" aria-hidden="true"><use href="#i-sparkles"></use></svg>
+        <span>All</span>
+        <span class="chip-count">{{ total_dramas }}</span>
+    </a>
+    {% for genre_filter in genre_filters %}
+    <a class="chip{% if selected_genre == genre_filter.name %} is-active{% endif %}" href="{{ dashboard_url }}?genre={{ genre_filter.name|urlencode }}#all-dramas"{% if selected_genre == genre_filter.name %} aria-current="true"{% endif %}>
+        <svg class="icon" aria-hidden="true"><use href="#i-tag"></use></svg>
+        <span>{{ genre_filter.name }}</span>
+        <span class="chip-count">{{ genre_filter.count }}</span>
+    </a>
+    {% endfor %}
+</div>
+
+<section class="shelf" id="all-dramas" aria-labelledby="shelf-title">
+    <div class="section-head">
+        <div>
+            <p class="section-kicker">Community picks</p>
+            <h2 class="section-title" id="shelf-title">{% if selected_genre %}{{ selected_genre }} dramas{% else %}All dramas{% endif %}</h2>
+            <p class="section-sub">{% if selected_genre %}{{ dramas|length }} {{ selected_genre }} recommendation{{ dramas|length|pluralize }} on the board{% else %}{{ dramas|length }} recommendation{{ dramas|length|pluralize }} on the board{% endif %}</p>
+        </div>
+        <div class="section-tools" aria-label="Display options">
+            {% if request.user.is_staff %}
+            <a class="btn-ghost featured-manage" href="{% url 'featured_manage' %}">
+                <svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg>
+                <span class="featured-manage-label">Change featured</span>
+            </a>
+            {% endif %}
+            <span class="icon-btn is-static" role="img" aria-label="Filter" title="Filtering is not available yet">
+                <svg class="icon" aria-hidden="true"><use href="#i-filter"></use></svg>
+            </span>
+            <span class="icon-btn is-static" role="img" aria-label="Sort" title="Sorting is not available yet">
+                <svg class="icon" aria-hidden="true"><use href="#i-sort"></use></svg>
+            </span>
+        </div>
+    </div>
+
+    <div class="poster-row">
+        {% for drama in dramas %}
+        {% include "Inv_Dramas/_poster_card.html" with drama=drama %}
+        {% empty %}
+        <div class="empty-panel shelf-empty">
+            <span class="empty-icon">
+                <svg class="icon" aria-hidden="true"><use href="#i-film"></use></svg>
+            </span>
+            {% if selected_genre %}
+            <h3>No {{ selected_genre }} dramas yet</h3>
+            <p>Try another genre or clear the filter to see every recommendation.</p>
+            <a href="{{ dashboard_url }}#all-dramas" class="empty-cta">
+                <svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg>
+                <span>Clear filter</span>
+            </a>
+            {% else %}
+            <h3>The shelf is empty</h3>
+            <p>Recommendations will appear here as soon as they are added to the board.</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% if dramas %}
+        <a href="{% url 'drama_create' %}" class="add-tile">
+            <span class="add-tile-icon">
+                <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+            </span>
+            <span class="add-tile-title">Add a recommendation</span>
+            <span class="add-tile-copy">Share a drama the board should watch next.</span>
+        </a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block footer %}
+<span class="foot-brand">
+    <svg class="icon" aria-hidden="true"><use href="#i-film"></use></svg>
+    DramaBoard
+</span>
+<span>{{ total_dramas }} drama{{ total_dramas|pluralize }} · {{ genre_count }} genre{{ genre_count|pluralize }} · Curated by the community</span>
+{% endblock %}
